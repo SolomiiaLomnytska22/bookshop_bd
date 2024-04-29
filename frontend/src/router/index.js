@@ -1,0 +1,89 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import LandingView from '../views/LandingView.vue'
+import BrowseView from '../views/BrowseView.vue'
+import LoginView from '../views/LoginView.vue'
+import BookDetails from '../views/BookDetails.vue'
+import ShoppingCart from '../views/ShoppingCartView.vue'
+import FormOrder from '../views/FormOrderView.vue'
+import UserOrdersView from '../views/UserOrdersView.vue'
+import ManageOrdersView from '../manager_views/ManageOrders.vue'
+import OrdersStats from '../manager_views/OrdersStats.vue' 
+import {getAccessToken} from '../services/getAccessToken'
+
+const routes = [
+  {
+    path: '/',
+    name: 'landing',
+    component: LandingView,
+  }, 
+  {
+    path: '/browse',
+    name: 'browse',
+    component: BrowseView,
+  }, 
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView,
+  },
+  {
+    path: '/details/:isbn',
+    name: 'bookDetails',
+    component: BookDetails,
+    meta: { requiresAuth: true } // This route requires authentication
+  }, 
+  {
+    path: '/shopping-cart',
+    name: 'shoppingCart',
+    component: ShoppingCart,
+    meta: { requiresAuth: true } // This route requires authentication
+  }, 
+  {
+    path: '/form-order',
+    name: 'formOrder',
+    component: FormOrder,
+    meta: { requiresAuth: true } // This route requires authentication
+  },
+  {
+    path: '/orders',
+    name: 'Orders',
+    component: UserOrdersView,
+    meta: { requiresAuth: true } // This route requires authentication
+  },
+  {
+    path: '/manage-orders',
+    name: 'ManageOrders',
+    component: ManageOrdersView,
+    meta: { requiresAuth: true } 
+  },
+  {
+    path: '/orders-stats',
+    name: 'OrderStats',
+    component: OrdersStats,
+    meta: { requiresAuth: true } 
+  }
+];
+
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = getAccessToken();
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  if (requiresAuth && !isAuthenticated) {
+    next({ name: 'login', query: { redirect: to.fullPath } });
+  } else {
+    next();
+  }
+});
+
+router.afterEach((to, from) => {
+  if (to.name !== 'login' && from.name === 'login') {
+    window.location.reload();
+  }
+});
+
+export default router;
