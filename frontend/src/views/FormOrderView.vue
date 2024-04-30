@@ -48,12 +48,12 @@
           </select>
         </div>
       </form>
-      <div class="form-group">
+      <div class="form-group" style="margin-top: 40px;">
         <label for="comment">Comment:</label>
         <input type="text" id="comment" v-model="order_data.Comment">
       </div>
     </div>
-    <button @click="save"> save</button>
+    <button @click="save">Confirm Order</button>
   </div>
 </template>
 
@@ -129,12 +129,12 @@ export default {
             StorageBookID: bookStorageData.StorageBookID,
             Quantity: item.quantity
           };
-
-          const addedOrderItem = await addOrderItem(request_data);
-          console.log(addedOrderItem);
+          await addOrderItem(request_data);
         }
+        this.$store.commit('clearCart')
+        this.$router.push('/success')
       } catch (error) {
-        console.error(error);
+        this.$notify({title: 'Error!', text: 'Error occured while adding your order. Please, try again later!', type: 'error'})
       }
     }
   }
@@ -143,12 +143,12 @@ export default {
 
 <style scoped>
 .order-form {
-  margin-top: 120px;
+  margin: 120px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.form-wrap{
+.form-wrap {
   display: flex;
   flex-direction: column;
   width: 50%;
@@ -157,39 +157,43 @@ h2 {
   font-size: 24px;
   margin-bottom: 20px;
 }
-h3{
+h3 {
   text-decoration: underline;
   cursor: pointer;
 }
-
 .form-group {
   margin-bottom: 15px;
 }
-
 label {
   font-weight: bold;
 }
-
 input[type="text"],
-input[type="email"] {
+input[type="email"],
+select { /* Applied style to select as well */
+  box-sizing: border-box;
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
 input[type="text"]:focus,
-input[type="email"]:focus {
+input[type="email"]:focus,
+select:focus { /* Added style for focus */
   outline: none;
   border-color: #3f1f1f;
 }
-
 input[type="text"]:invalid,
-input[type="email"]:invalid {
+input[type="email"]:invalid { /* Added style for invalid input */
   border-color: red;
 }
+select { /* Added style for select dropdown */
+  padding-right: 30px; /* Adjusted padding to accommodate the arrow icon */
+}
 
-select{
-  display: block;
+form {
+  background-color: #ececec;
+  padding: 20px;
+  border-radius: 5px;
 }
 </style>
+

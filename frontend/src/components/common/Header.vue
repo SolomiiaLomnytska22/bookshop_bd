@@ -77,8 +77,8 @@ export default {
 .dropdown {
     display: none;
     position: absolute;
-    background-color: #1e1e1e;
-    padding: 10px;
+    background-color: none;
+    padding: 0;
     padding-top: 50px;
     list-style-type: none;
 }
@@ -86,6 +86,18 @@ export default {
 .dropdown li a {
     margin: 5px;
     font-size: 16px;
+}
+
+.dropdown li:hover {
+    margin-left: 5px;
+    background-color: #3f1f1f;
+}
+
+.dropdown li {
+    background-color: #1e1e1e;
+    width: 100%;
+    text-align: start;
+    padding: 10px;
 }
 
 .header-nav li:hover .dropdown {

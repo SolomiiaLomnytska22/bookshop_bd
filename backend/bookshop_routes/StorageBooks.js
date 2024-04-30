@@ -6,8 +6,12 @@ router.route("/").get(storageBooksController.getAllStorageBooks).post(storageBoo
 
 router
   .route("/:id")
-  .get(storageBooksController.getStorageBookByISBN)
+  .get(storageBooksController.getStorageBookByID)
   .delete(storageBooksController.deleteStorageBook)
   .put(storageBooksController.updateStorageBook);
+
+  router
+  .route("/isbn/:id")
+  .get(storageBooksController.getStorageBookByISBN)
 
 module.exports = router

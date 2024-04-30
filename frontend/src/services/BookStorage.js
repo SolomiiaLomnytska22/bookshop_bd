@@ -26,6 +26,19 @@ export const getAllStorageBooks = async () => {
 export const getBookStorageItemByISBN = async (id) => {
     try {
         const token = getAccessToken();
+        const response = await axios.get(`${API_URL}/isbn/${id}`, {headers: {
+            Authorization: `Bearer ${token}` 
+        }});
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching book with id ${id}:`, error);
+        throw error;
+    }
+}
+
+export const getBookStorageItemByID = async (id) => {
+    try {
+        const token = getAccessToken();
         const response = await axios.get(`${API_URL}/${id}`, {headers: {
             Authorization: `Bearer ${token}` 
         }});
@@ -37,7 +50,7 @@ export const getBookStorageItemByISBN = async (id) => {
 }
 
 
-export const updatePostService = async (id, postServiceData) => {
+export const updateBookStorage = async (id, postServiceData) => {
     try {
         const token = getAccessToken();
         const url = `${API_URL}/${id}`;

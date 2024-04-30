@@ -14,7 +14,7 @@
             <button @click="$emit('edit', item)">✏️</button>
             <button @click="$emit('delete', item)">🗑️</button>
           </td>
-          <td><button @click="$emit('more', item)">More</button></td>
+          <td><button @click="$emit('more', item)">...</button></td>
         </tr>
       </tbody>
     </table>
@@ -26,7 +26,7 @@
       items: {
         type: Array,
         required: true
-      },
+      }
     },
     computed: {
       headers() {

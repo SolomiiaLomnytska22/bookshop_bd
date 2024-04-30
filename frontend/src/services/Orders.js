@@ -43,15 +43,36 @@ export const getAllOrdersByUserID = async (customerId) => {
     }
 };
 
+export const getOrderByID = async (customerId) => {
+    try {
+        const token = getAccessToken();
+        let response;
+        if (token) {
+            response = await axios.get(`${API_URL}/${customerId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}` 
+                }
+            });
+        } else {
+            response = await axios.get(`${API_URL}/${customerId}`);
+        }
+        return response.data;   
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        throw error;
+    }
+};
+
 export const updateOrder = async (orderId, orderData) => {
     try {
         const token = getAccessToken();
         const url = `${API_URL}/${orderId}`;
-        await axios.put(url, orderData, {
+        const response = await axios.put(url, orderData, {
             headers: {
                 Authorization: `Bearer ${token}` 
             }
         });
+        return response.data; 
     } catch (error) {
         console.error(`Error updating order with ID ${orderId}:`, error);
         throw error;

@@ -6,6 +6,7 @@ router.route("/").get(ordersController.getAllOrders).post(ordersController.creat
 
 router
   .route("/:id")
+  .get(ordersController.getOrderByID)
   .delete(ordersController.deleteOrder)
   .put(ordersController.updateOrder);
 

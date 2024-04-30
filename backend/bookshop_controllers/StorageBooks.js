@@ -43,6 +43,23 @@ console.log(req.params.id)
   }
 };
 
+exports.getStorageBookByID = async (req, res) => {
+  console.log(req.params.id)
+    try {
+      const storageBooks = await StorageBooks.findByPk(req.params.id);
+  
+      res.status(200).json(storageBooks);
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({
+        body: {
+          status: "error",
+          message: "Internal Server Error",
+        },
+      });
+    }
+  };
+
 exports.createStorageBook = async (req, res) => {
   try {
     console.log("Creating a new storage book");

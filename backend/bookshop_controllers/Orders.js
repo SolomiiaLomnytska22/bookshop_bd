@@ -16,15 +16,24 @@ exports.getAllOrdersByUserID = async (req, res) => {
     }
   });
 
-    for (const order of responseBody) {
-      let order_items = []
-      const items = await OrderItems.findAll({ where: { OrderID: order.OrderID } });
-      for (const item of items) {
-        order_items.push(item);
-      }
-      order.OrderItems = order_items
-    }
+  
     res.status(200).json(responseBody);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({
+      body: {
+        status: "error",
+        message: "Internal Server Error",
+      },
+    });
+  }
+};
+
+exports.getOrderByID = async (req, res) => {
+  try {
+    const orders = await Orders.findByPk(req.params.id);
+
+    res.status(200).json(orders);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({

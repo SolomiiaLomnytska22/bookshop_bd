@@ -9,6 +9,7 @@ import UserOrdersView from '../views/UserOrdersView.vue'
 import ManageOrdersView from '../manager_views/ManageOrders.vue'
 import OrdersStats from '../manager_views/OrdersStats.vue' 
 import {getAccessToken} from '../services/getAccessToken'
+import SuccessfullOrder from '../views/SuccessfullOrder.vue'
 
 const routes = [
   {
@@ -30,25 +31,25 @@ const routes = [
     path: '/details/:isbn',
     name: 'bookDetails',
     component: BookDetails,
-    meta: { requiresAuth: true } // This route requires authentication
+    meta: { requiresAuth: true }
   }, 
   {
     path: '/shopping-cart',
     name: 'shoppingCart',
     component: ShoppingCart,
-    meta: { requiresAuth: true } // This route requires authentication
+    meta: { requiresAuth: true }
   }, 
   {
     path: '/form-order',
     name: 'formOrder',
     component: FormOrder,
-    meta: { requiresAuth: true } // This route requires authentication
+    meta: { requiresAuth: true }
   },
   {
     path: '/orders',
     name: 'Orders',
     component: UserOrdersView,
-    meta: { requiresAuth: true } // This route requires authentication
+    meta: { requiresAuth: true }
   },
   {
     path: '/manage-orders',
@@ -61,6 +62,11 @@ const routes = [
     name: 'OrderStats',
     component: OrdersStats,
     meta: { requiresAuth: true } 
+  }, 
+  {
+    path: '/success',
+    name: 'SuccessfullOrder',
+    component: SuccessfullOrder
   }
 ];
 

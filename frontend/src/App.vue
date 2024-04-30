@@ -32,7 +32,6 @@ export default {
           caption: 'Cart',
           badge: quantity
         },{
-          link: '/account',
           caption: 'Account',
           dropdown_options: [
             {
