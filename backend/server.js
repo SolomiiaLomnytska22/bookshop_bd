@@ -3,7 +3,7 @@ const app = require("./app");
 
 const port = 3000;
 
-mongoose.connect("mongodb+srv://maksymDB:password22@cluster0.x0vi0qk.mongodb.net/logs").then(() => {
+mongoose.connect("mongodb+srv://solomiialomnytskapz2021:yE0wtyk8tld9NKUj@cluster0.oxdyu09.mongodb.net/Logger").then(() => {
   console.log("Db connection is successful");
 });
 

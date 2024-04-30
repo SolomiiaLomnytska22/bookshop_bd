@@ -12,7 +12,7 @@ app.use(cors(corsOrigin));
 const sequelize = require("./config/db.js");
 const cookieParser = require("cookie-parser");
 const verifyJWT = require("./bookshop_middleware/VerifyJWT");
-const { logger } = require("./middleware/logger.js");
+const { logger } = require("./bookshop_middleware/logger.js");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
