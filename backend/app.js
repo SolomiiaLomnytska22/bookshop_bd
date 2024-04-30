@@ -2,35 +2,35 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 app.use(express.json());
-const corsOrigin ={
-    origin:'http://localhost:8080',
-    credentials:true,            
-    optionSuccessStatus:200
-}
+const corsOrigin = {
+  origin: "http://localhost:8080",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
 app.use(cors(corsOrigin));
 
 const sequelize = require("./config/db.js");
-const cookieParser = require('cookie-parser');
-const verifyJWT = require('./bookshop_middleware/VerifyJWT');
-
+const cookieParser = require("cookie-parser");
+const verifyJWT = require("./bookshop_middleware/VerifyJWT");
+const { logger } = require("./middleware/logger.js");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-const loginRouter = require('./bookshop_routes/Login.js');
-app.use('/login', loginRouter);
+const loginRouter = require("./bookshop_routes/Login.js");
+app.use("/login", loginRouter);
 
-const logoutRouter = require('./bookshop_routes/Logout.js');
-app.use('/logout', logoutRouter);
+const logoutRouter = require("./bookshop_routes/Logout.js");
+app.use("/logout", logoutRouter);
 
-const registerRouter = require('./bookshop_routes/Register.js');
-app.use('/register', registerRouter);
+const registerRouter = require("./bookshop_routes/Register.js");
+app.use("/register", registerRouter);
 
-const refreshRouter = require('./bookshop_routes/RefreshToken.js');
-app.use('/refresh', refreshRouter);
+const refreshRouter = require("./bookshop_routes/RefreshToken.js");
+app.use("/refresh", refreshRouter);
 
-const statsRouter = require('./bookshop_routes/Stats.js');
-app.use('/stats', statsRouter);
+const statsRouter = require("./bookshop_routes/Stats.js");
+app.use("/stats", statsRouter);
 
 app.use(verifyJWT);
 
@@ -52,8 +52,11 @@ const reviewsRouter = require("./bookshop_routes/Reviews.js");
 const statusesRouter = require("./bookshop_routes/Statuses.js");
 const storageBooksRouter = require("./bookshop_routes/StorageBooks.js");
 const userLoginsRouter = require("./bookshop_routes/UserLogins.js");
+const logsRouter = require("./logger_routes/Log.js");
 
 sequelize.sync();
+
+app.use(logger);
 
 app.use("/books", booksRouter);
 app.use("/authors", authorsRouter);
@@ -73,6 +76,6 @@ app.use("/reviews", reviewsRouter);
 app.use("/statuses", statusesRouter);
 app.use("/storageBooks", storageBooksRouter);
 app.use("/userLogins", userLoginsRouter);
+app.use("/logs", logsRouter);
 
 module.exports = app;
-
