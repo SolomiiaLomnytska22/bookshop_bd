@@ -6,7 +6,7 @@ router.route("/").get(publishersController.getAllPublishers).post(publishersCont
 
 router
   .route("/:id")
-  //.get(publishersController.getPublisherByID)
+  .get(publishersController.getPublisherById)
   .delete(publishersController.deletePublisher)
   .put(publishersController.updatePublisher);
 

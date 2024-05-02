@@ -10,7 +10,9 @@ import ManageOrdersView from '../manager_views/ManageOrders.vue'
 import OrdersStats from '../manager_views/OrdersStats.vue' 
 import {getAccessToken} from '../services/getAccessToken'
 import SuccessfullOrder from '../views/SuccessfullOrder.vue'
-
+import AdminPage from '../admin_views/AdminPage.vue'
+import BookTable from '../admin_views/BookTable.vue'
+import StorageTable from '../admin_views/StorageTable.vue'
 const routes = [
   {
     path: '/',
@@ -67,6 +69,27 @@ const routes = [
     path: '/success',
     name: 'SuccessfullOrder',
     component: SuccessfullOrder
+  }, 
+  {
+    path: '/admin',
+    mane: 'AdminPage',
+    component: AdminPage,
+    children: [
+      {
+        path: '',
+        redirect: '/books',
+      },
+      {
+        path: '/books',
+        name: 'BooksTable',
+        component: BookTable,
+      },
+      {
+        path: '/storage',
+        name: 'StorageTable',
+        component: StorageTable,
+      },
+    ]
   }
 ];
 

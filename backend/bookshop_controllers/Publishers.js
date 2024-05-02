@@ -23,6 +23,21 @@ exports.getAllPublishers = async (req, res) => {
   }
 };
 
+exports.getPublisherById = async (req, res) => {
+  try {
+    const publishers = await Publishers.findByPk(req.params.id);
+    res.status(200).json(publishers);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({
+      body: {
+        status: "error",
+        message: "Internal Server Error",
+      },
+    });
+  }
+};
+
 exports.createPublisher = async (req, res) => {
   try {
     console.log("Creating a new publisher");

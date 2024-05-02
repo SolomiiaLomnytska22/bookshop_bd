@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { getAccessToken } from './getAccessToken';
 
-const API_URL = 'http://localhost:3000/genres';
+const API_URL = 'http://localhost:3000/publishers';
 
-export const getGenres = async () => {
+export const getPublishers = async () => {
     try {
         const token = getAccessToken();
         let response
@@ -18,12 +18,12 @@ export const getGenres = async () => {
         console.log(response.data)
         return response.data;   
     } catch (error) {
-    console.error('Error fetching genre services data:', error);
+    console.error('Error fetching post services data:', error);
     throw error;
     }
 };
 
-export const getGenreById = async (id) => {
+export const getPublisherById = async (id) => {
     try {
         const token = getAccessToken();
         const response = token ? await axios.get(`${API_URL}/${id}`, {headers: {
@@ -31,26 +31,13 @@ export const getGenreById = async (id) => {
         }}) : await axios.get(`${API_URL}/${id}`)
         return response.data;
     } catch (error) {
-        console.error(`Error fetching genre with id ${id}:`, error);
-        throw error;
-    }
-}
-
-export const getGenreByISBN = async (id) => {
-    try {
-        const token = getAccessToken();
-        const response = token ? await axios.get(`${API_URL}/isbn/${id}`, {headers: {
-            Authorization: `Bearer ${token}` 
-        }}) : await axios.get(`${API_URL}/isbn/${id}`)
-        return response.data;
-    } catch (error) {
-        console.error(`Error fetching genre with id ${id}:`, error);
+        console.error(`Error fetching book with id ${id}:`, error);
         throw error;
     }
 }
 
 
-export const updateGenre = async (id, postServiceData) => {
+export const updatePublisher = async (id, postServiceData) => {
     try {
         const token = getAccessToken();
         const url = `${API_URL}/${id}`;
@@ -60,12 +47,12 @@ export const updateGenre = async (id, postServiceData) => {
             }
         });
     } catch (error) {
-        console.error(`Error updating genre with id ${id}:`, error);
+        console.error(`Error updating post service with id ${id}:`, error);
         throw error;
     }
 };
 
-export const deleteGenre = async (id) => {
+export const deletePublisher = async (id) => {
     try {
         const token = getAccessToken();
         const response = await axios.delete(`${API_URL}/${id}`, { headers: {
@@ -74,15 +61,15 @@ export const deleteGenre = async (id) => {
         if (response.status === 200) {
         return true; 
         }
-        throw new Error(`Error deleting genre with id ${id}`);
+        throw new Error(`Error deleting post service with id ${id}`);
     } catch (error) {
-        console.error(`Error deleting genre with id ${id}:`, error);
+        console.error(`Error deleting post service with id ${id}:`, error);
         throw error;
     }
 };
 
 
-export const addPostService = async (data) => {
+export const addPublisher = async (data) => {
 
     try {
         const token = getAccessToken();

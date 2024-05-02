@@ -1,126 +1,150 @@
 <template>
-    <div class="bookshop-home">  
-      <section class="featured-books" >
-        <section class="header">
-          <h2>Featured Books</h2>
-          <div class="search-bar">
-            <input type="text" v-model="searchText" placeholder="Search books..." />
-            <button @click="search">🔎</button>
-          </div>
-        </section>
-        <section class="genres">
-          <div class="genre-item" @click="fetchBooks">All</div>
-          <div v-for="genre of genres" :key="genre.GenreID" @click="filterBooks(genre.GenreID)" class="genre-item">
-            <p>{{ genre.Name }}</p>
-          </div>
-        </section>
-        <section v-if="paginatedBooks.length"> 
-          <div class="book-list">
-            <router-link v-for="book of paginatedBooks" :key="book.ISBN" class="book-card" :to="'/details/' + book.ISBN">
-              <img :src="coverPicture(book)" :alt="book.Title" class="book-cover">
-              <h3>{{ book.Title }}</h3>
-              <div class="book-details">
-                <p>{{ book.AuthorNames.join(' ,') }}</p>
-                <p class="price">{{ book.Price }}$</p>
-              </div>
-            </router-link>
-          </div>
-          <div class="pagination">
-            <div> <button @click="prevPage" :disabled="currentPage === 0">{{"<"}}</button></div>
-            <span>{{ currentPage + 1 }} / {{ totalPages }}</span>
-            <div><button @click="nextPage" :disabled="currentPage === totalPages - 1">{{">"}}</button></div>
-          </div>
-        </section>
-        <section v-else-if="error_display" class="error">
-          <img :src="error_display.picture" alt="">
-          <p>❌{{error_display.description}}❌</p>
-        </section>
-        <section v-else class="error">
-          <p>No books found</p>
-        </section>
+  <div class="bookshop-home">  
+    <section class="featured-books" >
+      <section class="header">
+        <h2>Featured Books</h2>
+        <div class="search-bar">
+          <input type="text" v-model="searchText" placeholder="Search books..." />
+          <button @click="search">🔎</button>
+        </div>
       </section>
-    </div>
-  </template>
-  
-  <script>
-  import { getBooks, getBooksByGenre } from '../services/Book'
-  import { getGenres } from '../services/Genres';
-  export default {
-    async mounted () {
-      await this.fetchBooks();
+      <section class="genres">
+        <div class="genre-item" @click="fetchBooks">All</div>
+        <div v-for="genre of genres" :key="genre.GenreID" @click="filterBooks(genre.GenreID)" class="genre-item">
+          <p>{{ genre.Name }}</p>
+        </div>
+      </section>
+      <section v-if="loading">
+        <p>Loading...</p>
+        <img width="150px" src="https://i.pinimg.com/originals/5b/f0/a3/5bf0a3e0601d35349c5451fa52138ea6.gif">
+      </section>
+      <section v-else-if="paginatedBooks.length"> 
+        <div class="book-list">
+          <router-link v-for="book of paginatedBooks" :key="book.ISBN" class="book-card" :to="'/details/' + book.ISBN">
+            <img :src="coverPicture(book)" :alt="book.Title" class="book-cover">
+            <h4>{{ book.Title.length > 15? book.Title.slice(0, 10)+'...' :  book.Title }}</h4>
+            <div class="book-details">
+              <p>{{ book.AuthorNames.join(' ,') }}</p>
+              <p class="price">{{ book.Price }}$</p>
+            </div>
+          </router-link>
+        </div>
+        <div class="pagination">
+          <div> <button @click="prevPage" :disabled="currentPage === 0">{{"<"}}</button></div>
+          <span>{{ currentPage + 1 }} / {{ totalPages }}</span>
+          <div><button @click="nextPage" :disabled="currentPage === totalPages - 1">{{">"}}</button></div>
+        </div>
+      </section>
+      <section v-else-if="error_display" class="error">
+        <img :src="error_display.picture" alt="">
+        <p>❌{{error_display.description}}❌</p>
+      </section>
+      <section v-else class="error">
+        <p>No books found</p>
+      </section>
+    </section>
+  </div>
+</template>
+
+<script>
+import { getBooks, getBooksByGenre } from '../services/Book'
+import { getGenres } from '../services/Genres';
+export default {
+  async mounted () {
+    await this.fetchBooks();
+  },
+  data () {
+    return {
+      featuredBooks: [],
+      currentPage: 0,
+      itemsPerPage: 20,
+      error_display: null,
+      genres: [],
+      searchText: '',
+      loading: false 
+    }
+  },
+  computed: {
+    totalPages () {
+      return Math.ceil(this.featuredBooks.length / this.itemsPerPage)
     },
-    data () {
-      return {
-        featuredBooks: [],
-        currentPage: 0,
-        itemsPerPage: 20,
-        error_display: null,
-        genres: [],
-        searchText: ''
+    paginatedBooks () {
+      const start = this.currentPage * this.itemsPerPage
+      const end = start + this.itemsPerPage
+      return this.featuredBooks.slice(start, end)
+    }
+  },
+  methods: {
+    nextPage () {
+      if (this.currentPage < this.totalPages - 1) {
+        this.currentPage++
       }
     },
-    computed: {
-      totalPages () {
-        return Math.ceil(this.featuredBooks.length / this.itemsPerPage)
-      },
-      paginatedBooks () {
-        const start = this.currentPage * this.itemsPerPage
-        const end = start + this.itemsPerPage
-        return this.featuredBooks.slice(start, end)
+    prevPage () {
+      if (this.currentPage > 0) {
+        this.currentPage--
       }
     },
-    methods: {
-      nextPage () {
-        if (this.currentPage < this.totalPages - 1) {
-          this.currentPage++
+    coverPicture (book) {
+      return book.CoverImageURL || 'https://th.bing.com/th/id/OIP.P-nIodv7WzkQ4wYYPsXWaQAAAA?rs=1&pid=ImgDetMain'
+    },
+    async filterBooks(genreId){
+      try {
+        this.loading = true;
+        this.featuredBooks = await getBooksByGenre(genreId);
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.loading = false;
+      }
+    },
+    async fetchBooks(){
+      try {
+        this.loading = true;
+        this.featuredBooks = await getBooks();
+        this.genres = await getGenres();
+        
+      } catch (error) {
+        if (error.code === 'ERR_NETWORK') {
+          this.error_display = {
+            picture: 'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzllODN3cmNjaHA0OGFtajJwNmRhN25lbzhmNG85bXppZWx1NTNvNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/bC8EUWeuy5OIx6o7ul/giphy.gif',
+            description: error.message
+          };
+        } else if (error.response && error.response.status === 401) {
+          this.error_display = {
+            picture: 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXoxcXNnenk2aWdiOXB4emdxb254ZWswOGNocmJjcnFqZmxndmU1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/pQQUyfun25hnF6LE6e/giphy.gif',
+            description: error.message
+          };
         }
-      },
-      prevPage () {
-        if (this.currentPage > 0) {
-          this.currentPage--
+      } finally {
+        this.loading = false;
+      }
+    },
+    async search(){
+      if(this.searchText){
+        try{
+          this.loading = true;
+        console.log(this.searchText)
+        this.featuredBooks = await getBooks();
+        this.featuredBooks = this.featuredBooks.filter(book =>
+          book.Title.toLowerCase().includes(this.searchText.toLowerCase()) ||
+          book.AuthorNames.some(author => author.toLowerCase().includes(this.searchText.toLowerCase()))
+        )
         }
-      },
-      coverPicture (book) {
-        return book.CoverImageURL || 'https://th.bing.com/th/id/OIP.P-nIodv7WzkQ4wYYPsXWaQAAAA?rs=1&pid=ImgDetMain'
-      },
-      async filterBooks(genreId){
-        try {
-          this.featuredBooks = await getBooksByGenre(genreId);
-        } catch (error) {
+        catch(error){
           console.log(error)
         }
-      },
-      async fetchBooks(){
-        try {
-          this.featuredBooks = await getBooks();
-          this.genres = await getGenres();
-        } catch (error) {
-          if (error.code === 'ERR_NETWORK') {
-            this.error_display = {
-              picture: 'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzllODN3cmNjaHA0OGFtajJwNmRhN25lbzhmNG85bXppZWx1NTNvNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/bC8EUWeuy5OIx6o7ul/giphy.gif',
-              description: error.message
-            };
-          } else if (error.response && error.response.status === 401) {
-            this.error_display = {
-              picture: 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXoxcXNnenk2aWdiOXB4emdxb254ZWswOGNocmJjcnFqZmxndmU1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/pQQUyfun25hnF6LE6e/giphy.gif',
-              description: error.message
-            };
-          }
+        finally{
+          this.loading = false;
         }
-      },
-      async search(){
-        if(this.searchText){
-          this.featuredBooks = this.featuredBooks.filter(book =>
-            book.Title.toLowerCase().includes(this.searchText.toLowerCase()) ||
-            book.AuthorNames.some(author => author.toLowerCase().includes(this.searchText.toLowerCase()))
-          )
-        } else {
-          await this.fetchBooks()
-        }
+      } else {
+        await this.fetchBooks()
       }
     }
   }
-  </script>
+}
+</script>
+
   
   <style scoped>
   .error{
@@ -146,8 +170,8 @@
   
   .book-card {
     text-decoration: none;
-    width: 150px;
-    height: 300px;
+    width: 200px;
+    height: 400px;
     margin: 10px;
     padding: 10px;
     border: 1px solid #ddd;
@@ -182,7 +206,7 @@
   }
   
   .pagination {
-    margin-top: 15px;
+    margin: 15px 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -203,8 +227,9 @@
     cursor: not-allowed;
   }
 
-  .book-card h3{
-    font-size: large;
+  .book-card h4{
+    color:#1e1e1e;
+    font-size: medium;
     margin: 0;
     margin: 5px;
   }
@@ -216,13 +241,16 @@
   .genres{
     display: flex;
     justify-content: center;
-    padding: 15px;
+    padding: 15px 50px;
   }
 
   .genre-item{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 10px;
     margin: 0 10px;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
     color: #3f1f1f;
     background-color: #e9e9e9;
@@ -267,7 +295,8 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin: 0 5%;
+    padding: 0 5%;
+    box-sizing: border-box;
   }
   </style>
   

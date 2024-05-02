@@ -5,12 +5,12 @@ const verifyRoles = require("../bookshop_middleware/VerifyRole.js")
 const ROLES_LIST = require('../config/roles.js');
 
 router.route("/").get(bookController.getAllBooks).post(bookController.createBook);
-
+//verifyRoles(ROLES_LIST.Admin), 
 router
   .route("/:isbn")
   .get(bookController.getBookByISBN)
-  .delete(verifyRoles(ROLES_LIST.Admin), bookController.deleteBook)
-  .put(verifyRoles(ROLES_LIST.Admin), bookController.updateBook);
+  .delete(bookController.deleteBook)
+  .put(bookController.updateBook);
 
   router
   .route("/genre/:genreId")

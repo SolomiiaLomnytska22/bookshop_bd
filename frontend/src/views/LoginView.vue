@@ -54,7 +54,8 @@
           if (redirect) {
             this.$router.push(redirect);
           } else {
-            this.$router.push({ name: 'Browse' });
+            console.log('heer')
+            this.$router.push('/browse');
           }
         } catch (error) {
           if(error.request?.status === 401){

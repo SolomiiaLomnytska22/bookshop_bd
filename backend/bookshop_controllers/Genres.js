@@ -1,4 +1,4 @@
-const { Genres } = require("../bookshop_models/");
+const { Genres, Books_Genres } = require("../bookshop_models/");
 
 exports.getAllGenres = async (req, res) => {
   try {
@@ -48,6 +48,43 @@ exports.getGenreByID = async (req, res) => {
     };
 
     res.status(200).json(responseBody);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({
+      error: "Internal Server Error",
+    });
+  }
+};
+
+
+exports.getGenreByISBN = async (req, res) => {
+  try {
+    const ISBN = req.params.isbn;
+    console.log(`Getting genre with ID: ${ISBN}`);
+
+    if (isNaN(ISBN)) {
+      return res.status(400).json({
+        error: "Invalid genre ID.",
+      });
+    }
+
+    const genres_ids = await Books_Genres.findAll({ where: { Books_ISBN: ISBN } });
+   
+    const genres= [];
+
+    for (let j = 0; j < genres_ids.length; j++) {
+      const genreItem = await Genres.findByPk(genres_ids[j].Genres_GenreID);
+      genres.push(genreItem);
+    }
+
+    if (!genres) {
+      return res.status(404).json({
+        error: "Genre not found.",
+      });
+    }
+
+  
+    res.status(200).json(genres);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({

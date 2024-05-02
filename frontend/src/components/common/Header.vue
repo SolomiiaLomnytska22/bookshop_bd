@@ -33,6 +33,7 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
 .header {
     background: linear-gradient(to bottom right, #1e1e1e, #3f1f1f);
     padding: 20px;
@@ -43,8 +44,9 @@ export default {
 }
 
 .header-title {
+    font-family: "Pirata One", system-ui;
+    font-size: 30px;
     color: #d8d8d8;
-    font-size: 28px;
     font-weight: 1000;
     margin-left: 50px;
 }
@@ -79,7 +81,7 @@ export default {
     position: absolute;
     background-color: none;
     padding: 0;
-    padding-top: 50px;
+    padding-top: 45px;
     list-style-type: none;
 }
 

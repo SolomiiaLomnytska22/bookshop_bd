@@ -10,4 +10,7 @@ router
   .delete(authorsController.deleteAuthor)
   .put(authorsController.updateAuthor);
 
+  router
+  .route("/isbn/:isbn")
+  .get(authorsController.getAuthorByISBN)
 module.exports = router;

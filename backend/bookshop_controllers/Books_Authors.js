@@ -56,12 +56,12 @@ exports.createBooksAuthors = async (req, res) => {
 
 exports.deleteBooksAuthors = async (req, res) => {
   try {
-    const { Books_ISBN, Authors_AuthorID } = req.params;
-    console.log(Books_ISBN, Authors_AuthorID);
+    const { isbn, author } = req.query;
+    console.log(isbn, author);
     const booksAuthors = await Books_Authors.findOne({
       where: {
-        Books_ISBN,
-        Authors_AuthorID
+        Books_ISBN: isbn,
+        Authors_AuthorID: author
       }
     });
 

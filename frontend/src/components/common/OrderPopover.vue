@@ -111,7 +111,6 @@
         await updateCustomer(this.data.CustomerID, this.customer_data);
         await updateAddress(this.customer_address.AddressID, this.customer_address);
         for(const item of this.order_items){
-          console.log(item)
           await updateOrderItem(item.OrderItemID, item)
         }
         await this.getData()

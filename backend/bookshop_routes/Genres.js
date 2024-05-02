@@ -10,4 +10,7 @@ router
   .delete(genresController.deleteGenre)
   .put(genresController.updateGenre);
 
+  router
+  .route("/isbn/:isbn")
+  .get(genresController.getGenreByISBN)
 module.exports = router;

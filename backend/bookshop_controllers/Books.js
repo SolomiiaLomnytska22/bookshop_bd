@@ -6,48 +6,24 @@ exports.getAllBooks = async (req, res) => {
     
     for (let i = 0; i < books.length; i++) {
       const authors = await Books_Authors.findAll({ where: { Books_ISBN: books[i].ISBN } });
+      const genres = await Books_Genres.findAll({ where: { Books_ISBN: books[i].ISBN } });
       const authorNames = [];
-
+      const bookGenres = [];
+      
       for (let j = 0; j < authors.length; j++) {
         const authorItem = await Authors.findOne({ where: { AuthorID: authors[j].Authors_AuthorID } });
         authorNames.push(authorItem.FirstName + ' ' + authorItem.LastName);
       }
-      const book_storage = await StorageBooks.findOne({ where: { ISBN: books[i].ISBN } })
-      books[i].dataValues.Price = book_storage.UnitPrice;
-      books[i].dataValues.AuthorNames = authorNames;
-    }
-    
-    res.status(200).json(books);
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      error: "Internal Server Error",
-    });
-  }
-};
-
-exports.getBooksByGenre = async (req, res) => {
-  try {
-    const bookIds = await Books_Genres.findAll({ where: { Genres_GenreID: req.params.genreId } });
-
-    let books = []
-
-    for (let j = 0; j < bookIds.length; j++) {
-      const genreItem = await Books.findByPk(bookIds[j].Books_ISBN);
-      books.push(genreItem);
-    }
-    
-    for (let i = 0; i < books.length; i++) {
-      const authors = await Books_Authors.findAll({ where: { Books_ISBN: books[i].ISBN } });
-      const authorNames = [];
-
-      for (let j = 0; j < authors.length; j++) {
-        const authorItem = await Authors.findOne({ where: { AuthorID: authors[j].Authors_AuthorID } });
-        authorNames.push(authorItem.FirstName + ' ' + authorItem.LastName);
+      
+      for (let j = 0; j < genres.length; j++) {
+        const genreItem = await Genres.findOne({ where: { GenreID: genres[j].Genres_GenreID } });
+        bookGenres.push(genreItem.Name);
       }
-      const book_storage = await StorageBooks.findOne({ where: { ISBN: books[i].ISBN } })
-      books[i].dataValues.Price = book_storage.UnitPrice;
+      
       books[i].dataValues.AuthorNames = authorNames;
+      books[i].dataValues.Genres = bookGenres;
+      books[i].dataValues.Price = (await StorageBooks.findOne({where: {ISBN:  books[i].ISBN}})).UnitPrice
+      books[i].dataValues.PublisherName = (await Publishers.findByPk(books[i].PublisherID)).PublisherName
     }
     
     res.status(200).json(books);
@@ -99,6 +75,39 @@ exports.getBookByISBN = async (req, res) => {
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
+      error: "Internal Server Error",
+    });
+  }
+};
+
+exports.getBooksByGenre = async (req, res) => {
+  try {
+    const bookIds = await Books_Genres.findAll({ where: { Genres_GenreID: req.params.genreId } });
+    
+    let books = []
+
+    for (let j = 0; j < bookIds.length; j++) {
+      const genreItem = await Books.findByPk(bookIds[j].Books_ISBN);
+      books.push(genreItem);
+    }
+    
+    for (let i = 0; i < books.length; i++) {
+      const authors = await Books_Authors.findAll({ where: { Books_ISBN: books[i].ISBN } });
+      const authorNames = [];
+
+      for (let j = 0; j < authors.length; j++) {
+        const authorItem = await Authors.findOne({ where: { AuthorID: authors[j].Authors_AuthorID } });
+        authorNames.push(authorItem.FirstName + ' ' + authorItem.LastName);
+      }
+      const book_storage = await StorageBooks.findOne({ where: { ISBN: books[i].ISBN } })
+      books[i].dataValues.Price = book_storage.UnitPrice;
+      books[i].dataValues.AuthorNames = authorNames;
+    }
+    
+    res.status(200).json(books);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({
       error: "Internal Server Error",
     });
   }

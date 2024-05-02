@@ -1,18 +1,14 @@
-const { StorageBooks } = require("../bookshop_models/");
+const { StorageBooks, Books } = require("../bookshop_models/");
 
 exports.getAllStorageBooks = async (req, res) => {
   try {
     const storageBooks = await StorageBooks.findAll();
 
-    const responseBody = storageBooks.map((book) => ({
-      StorageBookID: book.StorageBookID,
-      ISBN: book.ISBN,
-      AvailableQuantity: book.AvailableQuantity,
-      NextDeliveryDate: book.NextDeliveryDate,
-      UnitPrice: book.UnitPrice,
-    }));
-
-    res.status(200).json(responseBody);
+    for (let i = 0; i < storageBooks.length; i++) {
+      storageBooks[i].dataValues.Title = (await Books.findByPk(storageBooks[i].ISBN)).Title
+    }
+   
+    res.status(200).json(storageBooks);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({

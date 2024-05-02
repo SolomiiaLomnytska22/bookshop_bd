@@ -6,7 +6,7 @@
           <button>Download As File</button>
         </div>
     </div>
-    <Table :items="table_orders_data" @edit="editOrder" @delete="showConfirmation" @more="openMoreInfo"></Table>
+    <Table class="table" :items="table_orders_data" @edit="editOrder" @delete="showConfirmation" @more="openMoreInfo"></Table>
     <confirmation-dialog :show="showConfirmationDialog" :message="message" @confirm="deleteOrder" @close="showConfirmationDialog = false" />
     <OrderPopover :show="show_more" :data="edit_item" @close="show_more = false"></OrderPopover>
     <OrderFormVue :show="show_edit_form" :order="edit_item" @close="show_edit_form=false" @update_order="updateOrder"></OrderFormVue>
@@ -96,13 +96,17 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .orders-table{
   margin-top: 120px;
   padding: 5%;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.table{
+  width: 1000px;
 }
 .header {
   width: 100%;

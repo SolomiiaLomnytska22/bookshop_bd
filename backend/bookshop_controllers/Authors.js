@@ -1,4 +1,4 @@
-const { Authors } = require("../bookshop_models/");
+const { Authors, Books_Authors } = require("../bookshop_models/");
 
 exports.getAllAuthors = async (req, res) => {
   try {
@@ -54,6 +54,44 @@ exports.getAuthorByID = async (req, res) => {
     });
   }
 };
+
+exports.getAuthorByISBN = async (req, res) => {
+  try {
+    const ISBN = req.params.isbn;
+    console.log(`Getting author with ID: ${ISBN}`);
+
+    if (isNaN(ISBN)) {
+      return res.status(400).json({
+        error: "Invalid author ID.",
+      });
+    }
+
+    const authors_ids = await Books_Authors.findAll({ where: { Books_ISBN: ISBN } });
+   
+    const authors= [];
+
+    for (let j = 0; j < authors_ids.length; j++) {
+      const authorItem = await Authors.findByPk(authors_ids[j].Authors_AuthorID);
+      authors.push(authorItem);
+    }
+
+    
+    if (!authors) {
+      return res.status(404).json({
+        error: "Author not found.",
+      });
+    }
+   
+
+    res.status(200).json(authors);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({
+      error: "Internal Server Error",
+    });
+  }
+};
+
 
 exports.createAuthor = async (req, res) => {
   try {
